@@ -10,9 +10,31 @@ MobX is a ride hailing service with features such as: authentication, ride reque
 - bcrypt for password hashing
 - Helmet, cors, dotenv, morgan
 
-## Features
+## General Features
+- Two roles: Driver and Rider. Riders can request rides, and drivers can accept and complete rides.
 - User registration/login (rider, driver roles)
 - Request a ride (pickup/dropoff)
 - Driver views pending rides
 - Accept/start/complete rides
 - View ride history
+
+## Attribute Features:
+- Authentication: 
+User signup/login (role: rider, driver)
+JWT token issuance
+Role-based access control
+
+- Ride Flow
+Rider creates a ride request (pickup, dropoff)
+Driver sees a list of pending requests
+Driver accepts a ride → status: accepted
+Driver marks ride as in_progress then completed
+
+- Geolocation (basic logic only)
+Store coordinates for pickup & dropoff
+Optional: Distance estimation logic
+
+- Trip History
+Rider: List of past trips
+Driver: List of trips served
+

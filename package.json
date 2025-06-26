@@ -1,0 +1,49 @@
+{
+  "name": "mobilityx",
+  "version": "1.0.0",
+  "description": "MobX is a ride hailing service",
+  "main": "server.ts",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "nodemon --watch src --exec ts-node src/server.ts",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1253William/Bleoo-Connect-App-Backend.git"
+  },
+  "author": "William O Parwar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1253William/Bleoo-Connect-App-Backend/issues"
+  },
+  "homepage": "https://github.com/1253William/Bleoo-Connect-App-Backend#readme",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.0.1",
+    "@types/nodemailer": "^6.4.17",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^7.0.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
