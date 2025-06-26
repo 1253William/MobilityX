@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import UserModel, { User } from '../models/user.model'
+import { User } from '../models/user.model'
 import { AuthRequest } from '../types/authRequest'
 import bcrypt from "bcryptjs";
 require('dotenv').config();
@@ -16,7 +16,7 @@ export const userData = async (req: AuthRequest, res: Response): Promise<void> =
             return;
         }
 
-        const user = await UserModel.findById(userId).select('-password -__v');
+        const user = await User.findById(userId).select('-password -__v');
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -60,7 +60,7 @@ export const viewPublicProfile = async (req: AuthRequest, res: Response): Promis
             return;
         }
 
-        const user = await UserModel.findOne({ userName: username }).select(
+        const user = await User.findOne({ userName: username }).select(
             'fullName userName yearGroup profession About profileImage backgroundImage affiliatedGroups ');
         if (!user) {
             res.status(404).json({
@@ -101,7 +101,7 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
 
         const { fullName, userName, yearGroup, occupation, About, profileImage, backgroundImage, affiliatedGroups } = req.body;
 
-        const user = await UserModel.findById(userId);
+        const user = await User.findById(userId);
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -113,15 +113,9 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
         const updatedInfo = {
             fullName: fullName || user.fullName,
             userName: userName || user.userName,
-            yearGroup: yearGroup || user.yearGroup,
-            occupation: occupation || user.occupation,
-            About: About || user.About,
-            profileImage: profileImage || user.profileImage,
-            backgroundImage: backgroundImage || user.profileImage,
-            affiliatedGroups: affiliatedGroups || user.affiliatedGroups
         };
 
-        await UserModel.findByIdAndUpdate(userId, updatedInfo, { new: true, runValidators: true });
+        await User.findByIdAndUpdate(userId, updatedInfo, { new: true, runValidators: true });
 
         res.status(200).json({
             success: true,
@@ -158,7 +152,7 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
             return;
         }
 
-        const user = await UserModel.findById(userId).select('+password');
+        const user = await User.findById(userId).select('+password');
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -187,7 +181,7 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         user.passwordChangedAt = new Date();
-        await UserModel.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true, runValidators: true });
+        await User.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true, runValidators: true });
 
 
         res.status(200).json({
@@ -215,7 +209,7 @@ export const deleteAccount = async(req: AuthRequest, res: Response): Promise<voi
             return;
         }
 
-        const user = await UserModel.findById(userId);
+        const user = await User.findById(userId);
         if (!user) {
             res.status(404).json({
                 success: false,

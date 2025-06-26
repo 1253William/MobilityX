@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import UserModel, {User} from '../models/user.model';
+import {User} from '../models/user.model';
 import generateOTP from '../utils/OTP';
 import OTPVerification from '../models/OTPVerification.model';
 import {CustomJwtPayload} from '../types/authRequest';
@@ -28,22 +28,14 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
             userName,
             email,
             password,
-            profileImage,
-            studentStatus,
-            yearGroup,
-            occupation,
-            yearClass,
-            residency,
-            hall,
-            affiliatedGroups,
             role,
             isAccountDeleted } = req.body;
 
         //Validation
-        if (!fullName || !email || !password || !studentStatus) {
+        if (!fullName || !email || !password) {
             res.status(400).json({
                 success: false,
-                message: "Full Name, Email, Student Status, Password are required"
+                message: "Full Name, Email, Password are required"
             });
             return
         }
@@ -65,7 +57,7 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing username
-        const Username = await UserModel.findOne({ userName }) as User;
+        const Username = await User.findOne({ userName });
         if (Username) {
             res.status(400).json({
                 success: false,
@@ -75,7 +67,7 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing user
-        const existingUser = await UserModel.findOne({ email }) as User;
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             //Restore the user's account if it was deleted
             if (existingUser.isAccountDeleted) {
@@ -100,30 +92,18 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         //Create New User
-        const newUser: User = await UserModel.create({
+         await User.create({
             fullName,
+            userName,
             email,
             password: hashedPassword,
             role,
-            userName,
-            profileImage,
-            studentStatus,
-            yearGroup,
-            occupation,
-            yearClass,
-            residency,
-            hall,
-            affiliatedGroups,
             isAccountDeleted
         });
 
-        //Remove password in response object
-        const userWithoutPassword = newUser.toObject();
-        delete userWithoutPassword.password;
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: userWithoutPassword
         });
 
     } catch (error: unknown) {
@@ -151,7 +131,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing user
-        const existingUser = await UserModel.findOne({email}).select('+password');
+        const existingUser = await User.findOne({email}).select('+password');
         if (!existingUser) {
             res.status(400).json({
                 success: false,
@@ -183,7 +163,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             userId: existingUser._id,
             email: existingUser.email,
             role: existingUser.role
-        }, ACCESS_TOKEN_SECRET as string, {expiresIn: '15m'});
+        }, ACCESS_TOKEN_SECRET as string, {expiresIn: '1h'});
 
         //Remove password before sending a response
         const userWithoutPassword = existingUser.toObject() as any;
@@ -216,7 +196,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
             return;
         }
 
-        const user = await UserModel.findOne({ email });
+        const user = await User.findOne({ email });
         if (!user) {
             res.status(200).json({ success: true, message: 'OTP sent if user exists' });
             return;
@@ -291,7 +271,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const user = await UserModel.findById(otpRecord.userId);
+        const user = await User.findById(otpRecord.userId);
         if (!user) {
             res.status(400).json({ success: false, message: 'User not found' });
             return;
@@ -370,7 +350,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const user = await UserModel.findById(decoded.userId);
+        const user = await User.findById(decoded.userId);
         if (!user) {
             res.status(404).json({ error: "User not found" });
             return;
