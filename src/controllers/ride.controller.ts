@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Ride } from '../models/ride.model';
 import {AuthRequest} from "../types/authRequest";
+import { Schema, Types } from 'mongoose';
 
 
 //@route POST /api/v1/rides/request
@@ -79,7 +80,45 @@ export const getPendingRides = async(req: AuthRequest, res: Response): Promise<v
 //@route PATCH /api/v1/rides/:id/accept
 //@desc Driver accepts ride (driver only), (status change to accepted)
 //@access Private
+export const acceptRide = async(req: AuthRequest, res: Response): Promise<void> => {
+    try{
+        const rideId = req.params.id;
+        const userId = req.user?.userId;
 
+        if(!rideId || !userId) {
+            res.status(400).json({
+                success: false,
+                message: "Ride ID and user ID are required"
+            });
+            return;
+        }
+
+        const ride = await Ride.findById(rideId);
+        if(!ride || ride.status !== 'pending') {
+            res.status(404).json({
+                success: false,
+                message: "Ride not available at this time"
+            });
+            return;
+        }
+            ride.status = "accepted";
+            ride.driver =  userId as any;
+            await ride.save();
+
+
+        res.status(200).json({
+            success: true,
+            message: "Ride accepted successfully.",
+            data: ride
+        })
+
+
+    }catch (error) {
+        console.log({ message: "Error accepting ride", error });
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+        return;
+    }
+}
 
 //Trip History
 //@route PATCH /api/v1/rides/:id/start
