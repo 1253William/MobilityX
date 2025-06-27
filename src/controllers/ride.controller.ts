@@ -45,6 +45,35 @@ export const requestRide = async (req: AuthRequest, res: Response): Promise<void
 //@route GET /api/v1/rides/pending
 //@desc Driver views all pending rides (driver only), Fetch all new rides (pending)
 //@access Private
+export const getPendingRides = async(req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+
+        if(!userId) {
+            res.status(401).json({
+                success: false,
+                message: "Unauthorized: No user found. Please login"
+            });
+        }
+
+        const rides = await Ride.find({
+            rider: userId,
+            status: "pending"
+        }).select('-createdAt -updatedAt -__v')
+
+        res.status(200).json({
+            success: true,
+            message: "Rides fetched successfully.",
+            data: rides
+        })
+
+
+    }catch (error) {
+        console.log({ message: "Error fetching rides", error });
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+        return;
+    }
+}
 
 
 //@route PATCH /api/v1/rides/:id/accept
