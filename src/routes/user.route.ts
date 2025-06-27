@@ -5,7 +5,6 @@ import {
     deleteAccount,
     updateProfile,
     userData,
-    viewPublicProfile
 } from "../controllers/user.controller";
 import { authMiddleware } from "../middlewares/authentication.middleware";
 import { authorizedRoles } from "../middlewares/roles.middleware";
@@ -68,63 +67,8 @@ import { authorizedRoles } from "../middlewares/roles.middleware";
 //@route GET /api/v1/status/profile
 //@desc Get Data/Profile/Details of Logged-in user (Get your own profile)
 //@access private
-router.get('/profile', authMiddleware, authorizedRoles("User"), userData);
+router.get('/profile', authMiddleware, authorizedRoles("rider", "driver"), userData);
 
-
-/**
- * @swagger
- * /api/v1/status/users/:username:
- *   get:
- *     tags:
- *       - User
- *     summary: View a user's public profile
- *     description: Fetches the public profile of a user using their username.
- *     parameters:
- *       - in: path
- *         name: username
- *         required: true
- *         schema:
- *           type: string
- *         description: Unique username of the user
- *     responses:
- *       200:
- *         description: Public profile data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: object
- *                   properties:
- *                     fullName:
- *                       type: string
- *                     userName:
- *                       type: string
- *                     yearGroup:
- *                       type: string
- *                     profession:
- *                       type: string
- *                     About:
- *                       type: string
- *                     profileImage:
- *                       type: string
- *                     backgroundImage:
- *                       type: string
- *                     affiliatedGroups:
- *                       type: array
- *       404:
- *         description: User not found
- *       500:
- *         description: Internal Server Error
- */
-//@route GET /api/v1/status/users/:username
-//@desc Get or View another user’s public profile
-//@access private
-router.get('/users/:username', authMiddleware, authorizedRoles("User"), viewPublicProfile);
 
 /**
  * @swagger
@@ -188,7 +132,7 @@ router.get('/users/:username', authMiddleware, authorizedRoles("User"), viewPubl
 //@route PUT /api/v1/status/profile
 //@desc Update profile (fullName, userName, profileImage/avatar, bio/About, etc.)
 //@access private
-router.put('/profile', authMiddleware, authorizedRoles("User"), updateProfile);
+router.put('/profile', authMiddleware, authorizedRoles("rider", "driver"), updateProfile);
 
 /**
  * @swagger
@@ -242,7 +186,7 @@ router.put('/profile', authMiddleware, authorizedRoles("User"), updateProfile);
 //@route PUT /api/v1/status/update/password
 //@desc Change password (when logged in)
 //@access private
-router.put('/update/password', authMiddleware, authorizedRoles("User"), changePassword);
+router.put('/update/password', authMiddleware, authorizedRoles("rider", "driver"), changePassword);
 
 /**
  * @swagger
@@ -276,7 +220,7 @@ router.put('/update/password', authMiddleware, authorizedRoles("User"), changePa
 //@route DELETE	/api/v1/status/account/delete
 //@desc Deactivate/Delete account (Soft Delete)
 //@access private
-router.delete('/account/delete', authMiddleware, authorizedRoles("User"), deleteAccount);
+router.delete('/account/delete', authMiddleware, authorizedRoles("rider","driver"), deleteAccount);
 
 
 

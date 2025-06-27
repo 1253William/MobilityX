@@ -39,55 +39,6 @@ export const userData = async (req: AuthRequest, res: Response): Promise<void> =
     }
 }
 
-//@route GET /api/v1/status/users/:username
-//@desc Get or View another user’s public profile
-//@access Private
-export const viewPublicProfile = async (req: AuthRequest, res: Response): Promise<void> => {
-    try {
-        const userId = req.user?.userId;
-        const { username } = req.params;
-
-        if(!username) {
-            res.status(400).json({
-                success: false,
-                message: "Username is required"
-            });
-            return;
-        }
-
-        if (!userId) {
-            res.status(401).json({success: false, message: "Unauthorized"})
-            return;
-        }
-
-        const user = await User.findOne({ userName: username }).select(
-            'fullName userName yearGroup profession About profileImage backgroundImage affiliatedGroups ');
-        if (!user) {
-            res.status(404).json({
-                success: false,
-                message: "User not found"
-            });
-            return;
-        }
-
-        res.status(200).json(
-            {
-                success: true,
-                message: "User profile fetched successfully.",
-                data: user
-            }
-        );
-        return;
-
-
-    }catch (error) {
-        console.log({ message: "Error viewing this user's profile", error });
-        res.status(500).json({ success: false, error: "Internal Server Error" });
-        return;
-    }
-}
-
-
 //@route PUT /api/v1/status/profile
 //@desc Update Data/Profile/Details of Logged-in user
 //@access Private

@@ -31,10 +31,10 @@ Driver accepts a ride → status: accepted
 Driver marks ride as in_progress then completed
 
 - Geolocation (basic logic only)
-Store coordinates for pickup & dropoff
+Store coordinates for pickup and drop off
 Optional: Distance estimation logic
 
 - Trip History
-Rider: List of past trips
+Rider: List of past-trips
 Driver: List of trips served
 

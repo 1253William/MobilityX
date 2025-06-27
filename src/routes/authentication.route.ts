@@ -234,10 +234,4 @@ router.post('/otp/verify', otpVerifyLimiter, verifyOTP)
 router.put('/otp/reset', resetPassword)
 
 
-
-
-//Option for uploading profile photo
-//Add user profile icon/photo
-
-
 export default router;
