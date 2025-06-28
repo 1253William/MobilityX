@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import {requestRide, getPendingRides, acceptRide} from "../controllers/ride.controller";
+import {requestRide, getPendingRides, acceptRide, startRide, completeRide} from "../controllers/ride.controller";
 import { authMiddleware } from "../middlewares/authentication.middleware";
 import { authorizedRoles } from "../middlewares/roles.middleware";
 
@@ -19,6 +19,17 @@ router.get('/pending', authMiddleware, authorizedRoles("driver"), getPendingRide
 //@desc Driver accepts ride (driver only), (status change to accepted)
 //@access Private
 router.patch('/:id/accept', authMiddleware, authorizedRoles("driver"), acceptRide);
+
+
+//@route PATCH /api/v1/rides/:id/start
+//@desc Driver starts ride (driver only), (status change to in progress)
+//@access Private
+router.patch('/:id/start', authMiddleware, authorizedRoles("driver"), startRide);
+
+//@route PATCH /api/v1/rides/:id/complete
+//@desc Driver completes ride (driver only), (status change to completed)
+//@access Private
+router.patch('/:id/complete', authMiddleware, authorizedRoles("driver"), completeRide);
 
 
 export default router;

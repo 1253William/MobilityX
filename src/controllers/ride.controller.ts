@@ -120,16 +120,89 @@ export const acceptRide = async(req: AuthRequest, res: Response): Promise<void> 
     }
 }
 
-//Trip History
+
 //@route PATCH /api/v1/rides/:id/start
 //@desc Driver starts ride (driver only), (status change to in progress)
 //@access Private
+export const startRide = async(req: AuthRequest, res: Response): Promise<void> =>{
+    try {
+        const rideId = req.params.id;
+        const userId = req.user?.userId;
+
+        if(!rideId || !userId) {
+            res.status(400).json({
+                success: false,
+                message: "Ride ID and user ID are required"
+            });
+            return;
+        }
+        const ride = await Ride.findById(rideId);
+        if(!ride || ride.status !== 'accepted') {
+            res.status(404).json({
+                success: false,
+                message: "Ride not accepted at this time. Please accept the ride first."
+            });
+            return;
+        }
+        ride.status = "in_progress";
+        await ride.save();
+
+
+        res.status(200).json({
+            success: true,
+            message: "Ride started successfully.",
+            data: ride
+        })
+
+    } catch (error) {
+        console.log({ message: "Error starting ride", error });
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+        return;
+    }
+}
 
 
 //@route PATCH /api/v1/rides/:id/complete
 //@desc Driver completes ride (driver only), (status change to completed)
 //@access Private
+export const completeRide = async(req:AuthRequest, res: Response): Promise<void> => {
+    try {
+        const rideId = req.params.id;
+        const userId = req.user?.userId;
+        if(!rideId || !userId) {
+            res.status(400).json({
+                success: false,
+                message: "Ride ID and user ID are required"
+            });
+            return;
+        }
+        const ride = await Ride.findById(rideId);
+        if(!ride || ride.status !== 'in_progress') {
+            res.status(404).json({
+                success: false,
+                message: "Ride not in progress at this time. Please start the ride first."
+            });
+            return;
+        }
+        ride.status = "completed";
+        await ride.save();
 
+
+        res.status(200).json({
+            success: true,
+            message: "Ride completed successfully.",
+            data: ride
+        })
+
+
+    } catch (error) {
+        console.log({ message: "Error finishing ride", error });
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+        return;
+    }
+}
+
+//Trip History
 //@route GET /api/v1/rides/my-trips
 //@desc View/fetch user specific trips (all roles)
 //@access Private
